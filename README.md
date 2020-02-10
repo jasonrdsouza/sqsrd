@@ -1,0 +1,35 @@
+# Todo
+- look into how the context works (https://golang.org/pkg/context/) and if I need it
+- tests
+- add doc strings in code
+- discuss setting up from scratch
+  - where it looks for credentials, etc
+  - verbose/ test command to ensure creds are found and working
+- add to homebrew and mention that as an installation method
+- mention how to build from source (using go modules)
+- switch from region to profile flag
+- make it harder to mess up source and destination queues
+
+# Future Work
+- allow custom visibility timeout (command line flag)
+- allow configurable long polling wait time
+- explanatory readme of SQS best practices and gotchas
+  - messages timeing out during redrive and reappearing
+  - messages disappearing after 14 days
+- explain SQS concepts
+  - default visibility timeout
+  - message retention period
+  - delivery delay
+  - receive message wait time
+  - redrive policy (dlq, max receives)
+  - FIFO queue (not currently supported)
+- explanation of permissions needed to run
+- config file (to alias commonly redriven queues)
+- parallelism configuration
+- output redriven messages to a file
+- filtering during redrive
+- keep track of redriven messages and stop once we only see duplicate messages
+- ability to keep running even when the queue is empty?
+- find forums, stackoverflow questions, etc where people are asking about redriving SQS messages and respond with tool usage
+- compile and publish releases (to github) for other platforms (supported by go)
+- use profiler to speed up critical path
