@@ -1,35 +1,28 @@
-# Todo
-- look into how the context works (https://golang.org/pkg/context/) and if I need it
-- tests
-- add doc strings in code
-- discuss setting up from scratch
-  - where it looks for credentials, etc
-  - verbose/ test command to ensure creds are found and working
-- add to homebrew and mention that as an installation method
-- mention how to build from source (using go modules)
-- switch from region to profile flag
-- make it harder to mess up source and destination queues
+# SQS Message Redriver
+Sqsrd is a utility to aid in "redriving" SQS messages. Typically, this is useful when an SQS queue has an associated [dead-letter queue](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-dead-letter-queues.html) (DLQ), and you wish to move messages from the DLQ back onto the source queue for reprocessing.
 
-# Future Work
-- allow custom visibility timeout (command line flag)
-- allow configurable long polling wait time
-- explanatory readme of SQS best practices and gotchas
-  - messages timeing out during redrive and reappearing
-  - messages disappearing after 14 days
-- explain SQS concepts
-  - default visibility timeout
-  - message retention period
-  - delivery delay
-  - receive message wait time
-  - redrive policy (dlq, max receives)
-  - FIFO queue (not currently supported)
-- explanation of permissions needed to run
-- config file (to alias commonly redriven queues)
-- parallelism configuration
-- output redriven messages to a file
-- filtering during redrive
-- keep track of redriven messages and stop once we only see duplicate messages
-- ability to keep running even when the queue is empty?
-- find forums, stackoverflow questions, etc where people are asking about redriving SQS messages and respond with tool usage
-- compile and publish releases (to github) for other platforms (supported by go)
-- use profiler to speed up critical path
+# Quickstart
+Download the latest release of sqsrd
+```
+wget https://github.com/jasonrdsouza/sqsrd/releases/download/v0.1/sqsrd
+```
+
+Make the sqsrd binary executable (optionally, add it to your shell path)
+```
+chmod +x sqsrd
+```
+
+Run sqsrd with the desired options
+```
+# example help dialog
+./sqsrd -h
+
+# minimal example of redriving a DLQ
+# replace region and queue URLs with your own values
+sqsrd -region "us-west-2" -source "https://sqs.us-west-2.amazonaws.com/123456789000/sqs-queue-name" -dest "https://sqs.us-west-2.amazonaws.com/123456789000/sqs-queue-name-dlq"
+
+# redrive using custom AWS credential profile
+sqsrd -region "us-west-2" -profile "myprofile" -source "https://sqs.us-west-2.amazonaws.com/123456789000/sqs-queue-name" -dest "https://sqs.us-west-2.amazonaws.com/123456789000/sqs-queue-name-dlq"
+```
+
+By default, sqsrd will pull credentials from the [default AWS credentials file](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html). It also supports using [named profiles](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html) via the `-profile` flag.

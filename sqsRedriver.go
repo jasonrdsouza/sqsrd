@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/endpoints"
 
 	"github.com/aws/aws-sdk-go/aws/awserr"
@@ -152,21 +153,23 @@ func injectFakeMessages(numFakeMessages int, channel chan<- *sqs.Message) {
 
 func main() {
 	var redriver SqsRedriver
-	var region string
+	var region, profile string
 	var timeout time.Duration
 	var parallelism, bufferSize int
 
-	flag.StringVar(&redriver.sourceQueue, "s", "", "Source Queue URL.")
-	flag.StringVar(&redriver.destQueue, "d", "", "Destination Queue URL.")
-	flag.DurationVar(&timeout, "t", time.Minute*5, "Upload timeout.")
-	flag.IntVar(&redriver.maxEmptyReceives, "e", 3, "Maximum empty message receives.")
-	flag.IntVar(&parallelism, "p", 1, "Parallelism to run with.")
-	flag.IntVar(&bufferSize, "b", 100, "Size of message buffer to keep in memory.")
-	flag.StringVar(&region, "r", endpoints.UsEast1RegionID, "AWS Region.")
+	flag.StringVar(&redriver.sourceQueue, "source", "", "Source Queue URL.")
+	flag.StringVar(&redriver.destQueue, "dest", "", "Destination Queue URL.")
+	flag.DurationVar(&timeout, "timeout", time.Minute*5, "Upload timeout.")
+	flag.IntVar(&redriver.maxEmptyReceives, "emptyReceives", 3, "Maximum empty message receives.")
+	flag.IntVar(&parallelism, "parallelism", 1, "Parallelism to run with.")
+	flag.IntVar(&bufferSize, "buffer", 100, "Size of message buffer to keep in memory.")
+	flag.StringVar(&region, "region", endpoints.UsEast1RegionID, "AWS Region.")
+	flag.StringVar(&profile, "profile", "default", "Optional credentials profile to use")
 	flag.Parse()
 
 	sess := session.Must(session.NewSession(&aws.Config{
-		Region: aws.String(region),
+		Region:      aws.String(region),
+		Credentials: credentials.NewSharedCredentials("", profile),
 	}))
 
 	redriver.svc = sqs.New(sess)
