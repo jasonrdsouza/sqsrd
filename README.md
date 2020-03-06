@@ -4,7 +4,7 @@ Sqsrd is a utility to aid in "redriving" SQS messages. Typically, this is useful
 # Quickstart
 Download the latest release of sqsrd
 ```
-wget https://github.com/jasonrdsouza/sqsrd/releases/download/v0.1/sqsrd
+wget https://github.com/jasonrdsouza/sqsrd/releases/download/v0.2/sqsrd
 ```
 
 Make the sqsrd binary executable (optionally, add it to your shell path)
