@@ -9,7 +9,7 @@ import (
 
 	"dsouza.io/sqsrd"
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/credentials/stscreds"
 	"github.com/aws/aws-sdk-go/aws/endpoints"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/sqs"
@@ -42,9 +42,15 @@ func main() {
 	flag.StringVar(&profile, "profile", "default", "Optional credentials profile to use")
 	flag.Parse()
 
-	sess := session.Must(session.NewSession(&aws.Config{
-		Region:      aws.String(region),
-		Credentials: credentials.NewSharedCredentials("", profile),
+	sess := session.Must(session.NewSessionWithOptions(session.Options{
+		Config: aws.Config{
+			Region: aws.String(region),
+		},
+		Profile: profile,
+		// Enable MFA support
+		AssumeRoleTokenProvider: stscreds.StdinTokenProvider,
+		// Enable Shared Config support
+		SharedConfigState: session.SharedConfigEnable,
 	}))
 
 	redriver.Svc = sqs.New(sess)
