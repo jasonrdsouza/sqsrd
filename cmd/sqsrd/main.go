@@ -32,6 +32,7 @@ func main() {
 	flag.StringVar(&redriver.SourceQueue, "source", "", "Source Queue URL.")
 	flag.StringVar(&redriver.DestQueue, "dest", "", "Destination Queue URL.")
 	flag.IntVar(&redriver.MaxEmptyReceives, "emptyReceives", 3, "Maximum empty message receives.")
+	flag.IntVar(&redriver.VisibilityTimeout, "visibility", 60, "Redriven message visibility timeout (in seconds)")
 	flag.IntVar(&parallelism, "parallelism", 1, "Parallelism to run with.")
 	flag.IntVar(&bufferSize, "buffer", 100, "Size of message buffer to keep in memory.")
 	flag.StringVar(&region, "region", endpoints.UsEast1RegionID, "AWS Region.")
