@@ -25,10 +25,11 @@ func handleErrors(err error) {
 }
 
 type SqsRedriver struct {
-	Svc              *sqs.SQS
-	SourceQueue      string
-	DestQueue        string
-	MaxEmptyReceives int
+	Svc               *sqs.SQS
+	SourceQueue       string
+	DestQueue         string
+	MaxEmptyReceives  int
+	VisibilityTimeout int
 }
 
 func (s SqsRedriver) SendMessages(messages <-chan *sqs.Message, parallelism int) {
@@ -113,6 +114,7 @@ func (s SqsRedriver) receiveMessageWorker(messages chan<- *sqs.Message, wg *sync
 			MaxNumberOfMessages:   aws.Int64(10),
 			MessageAttributeNames: []*string{aws.String("All")},
 			QueueUrl:              aws.String(s.SourceQueue),
+			VisibilityTimeout:     aws.Int64(int64(s.VisibilityTimeout)),
 			//WaitTimeSeconds:       aws.Int64(2),
 		})
 		handleErrors(err)
